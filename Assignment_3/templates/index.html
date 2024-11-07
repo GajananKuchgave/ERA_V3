@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Text Processing App</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1 class="section-title">Text Processing Tool</h1>
+        
+        <div class="tab">
+            <button class="tablinks active" onclick="openTab(event, 'Load')">Load Data</button>
+            <button class="tablinks" onclick="openTab(event, 'Preprocess')">Preprocess</button>
+            <button class="tablinks" onclick="openTab(event, 'Augment')">Augment</button>
+        </div>
+
+        <div id="Load" class="tabcontent">
+            <h2 class="section-title">Load Your Text</h2>
+            <textarea id="inputText" class="text-box" placeholder="Paste your text here..."></textarea>
+            <button onclick="loadText()">Load Text</button>
+            <textarea id="loadedText" class="text-box" readonly placeholder="Loaded data will appear here..."></textarea>
+        </div>
+
+        <div id="Preprocess" class="tabcontent">
+            <h2 class="section-title">Preprocess Text</h2>
+            <select id="preprocessOption">
+                <option value="tokenize">Tokenization</option>
+                <option value="lowercase">Convert to Lowercase</option>
+                <option value="uppercase">Convert to Uppercase</option>
+                <option value="removeIndent">Remove Indentation</option>
+            </select>
+            <button onclick="preprocessText()">Process</button>
+            <textarea id="processedText" class="text-box" readonly placeholder="Processed text will appear here..."></textarea>
+        </div>
+
+        <div id="Augment" class="tabcontent">
+            <h2 class="section-title">Augment Text</h2>
+            <select id="augmentOption">
+                <option value="synonym">Synonym Replacement</option>
+                <option value="swap">Random Swapping</option>
+            </select>
+            <button onclick="augmentText()">Augment</button>
+            <textarea id="augmentedText" class="text-box" readonly placeholder="Augmented text will appear here..."></textarea>
+        </div>
+    </div>
+
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        function loadText() {
+            const inputText = document.getElementById("inputText").value;
+            document.getElementById("loadedText").value = inputText;
+        }
+
+        function preprocessText() {
+            const loadedText = document.getElementById("loadedText").value;
+            const option = document.getElementById("preprocessOption").value;
+            let result = loadedText;
+
+            switch(option) {
+                case "tokenize":
+                    result = loadedText.split(/\s+/).join('\n');
+                    break;
+                case "lowercase":
+                    result = loadedText.toLowerCase();
+                    break;
+                case "uppercase":
+                    result = loadedText.toUpperCase();
+                    break;
+                case "removeIndent":
+                    result = loadedText.replace(/^\s+/gm, '');
+                    break;
+            }
+
+            document.getElementById("processedText").value = result;
+        }
+
+        function augmentText() {
+            const loadedText = document.getElementById("loadedText").value;
+            const option = document.getElementById("augmentOption").value;
+            let result = loadedText;
+
+            if (option === "synonym") {
+                const synonyms = {
+                    'happy': 'joyful',
+                    'sad': 'unhappy',
+                    'big': 'large',
+                    'small': 'tiny',
+                    'good': 'great',
+                    'bad': 'terrible'
+                };
+                
+                result = loadedText.split(' ').map(word => 
+                    synonyms[word.toLowerCase()] || word
+                ).join(' ');
+            } else if (option === "swap") {
+                const words = loadedText.split(' ');
+                for (let i = 0; i < words.length - 1; i += 2) {
+                    [words[i], words[i + 1]] = [words[i + 1], words[i]];
+                }
+                result = words.join(' ');
+            }
+
+            document.getElementById("augmentedText").value = result;
+        }
+
+        // Show Load tab by default
+        document.getElementById("Load").style.display = "block";
+    </script>
+</body>
+</html>
