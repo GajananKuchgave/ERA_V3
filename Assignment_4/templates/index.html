@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MNIST CNN Training Progress</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta http-equiv="refresh" content="5">
+</head>
+<body>
+    <div class="container">
+        <h1>MNIST CNN Training Progress</h1>
+        
+        {% if is_training %}
+            <h2>Training in Progress - Epoch {{ epoch }}</h2>
+            <div class="metrics">
+                <div class="metric-item">
+                    <h3>Training Loss</h3>
+                    <p>{{ "%.4f"|format(latest_loss) }}</p>
+                </div>
+                <div class="metric-item">
+                    <h3>Training Accuracy</h3>
+                    <p>{{ "%.2f"|format(latest_train_acc * 100) }}%</p>
+                </div>
+                <div class="metric-item">
+                    <h3>Validation Accuracy</h3>
+                    <p>{{ "%.2f"|format(latest_val_acc * 100) }}%</p>
+                </div>
+            </div>
+            <img src="data:image/png;base64,{{ plot }}" alt="Training Progress">
+        {% else %}
+            <h2>Training Complete!</h2>
+            <div class="metrics final">
+                <div class="metric-item">
+                    <h3>Final Training Loss</h3>
+                    <p>{{ "%.4f"|format(latest_loss) }}</p>
+                </div>
+                <div class="metric-item">
+                    <h3>Final Training Accuracy</h3>
+                    <p>{{ "%.2f"|format(latest_train_acc * 100) }}%</p>
+                </div>
+                <div class="metric-item">
+                    <h3>Final Validation Accuracy</h3>
+                    <p>{{ "%.2f"|format(latest_val_acc * 100) }}%</p>
+                </div>
+            </div>
+            <img src="data:image/png;base64,{{ plot }}" alt="Training Progress">
+            
+            <h2>Test Results</h2>
+            <div class="test-results">
+                {% for i in range(test_images|length) %}
+                    <div class="test-item">
+                        <img src="data:image/png;base64,{{ test_images[i] }}" alt="Test Image">
+                        <p>Predicted: {{ test_predictions[i] }}</p>
+                        <p>Actual: {{ test_labels[i] }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html> 
